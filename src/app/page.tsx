@@ -17,7 +17,7 @@ const App = () => {
 
   return (
     <div>
-    <div>
+    <div style={{ backgroundColor: color }}>
       <h1 style={styles.title}>Generator Warna Acak</h1>
       <p style={styles.colorCode}>Kode Warna: {color}</p>
       <p style={styles.colorCode}>Time Clicked : {count}</p>
