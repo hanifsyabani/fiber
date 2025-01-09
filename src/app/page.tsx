@@ -1,64 +1,90 @@
 'use client'
-import { useState } from "react";
+import React, { useState } from 'react';
+import './globals.css';
 
+function App() {
+  // State untuk input daya dan jumlah port
+  const [inputPower, setInputPower] = useState<number | string>('');
+  const [splitterPorts, setSplitterPorts] = useState<number | string>('');
+  const [powerLoss, setPowerLoss] = useState<string | null>(null);
+  const [powerLossPerPort, setPowerLossPerPort] = useState<string | null>(null);
 
-const App = () => {
-  const [color, setColor] = useState("#ffffff");
-  const [count, setCount] = useState(0);
-
-  const generateRandomColor = () => {
-    const randomColor = `#${Math.floor(Math.random() * 16777215).toString(16).padStart(6, "0")}`;
-    setColor(randomColor);
-    setCount(count + 1);
+  // Fungsi untuk menangani perubahan nilai daya input
+  const handlePowerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputPower(e.target.value);
   };
 
-  // const generateCounter = () => {
-  
+  // Fungsi untuk menangani perubahan nilai jumlah port
+  const handlePortsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSplitterPorts(e.target.value);
+  };
+
+  // Fungsi untuk menangani form submit dan perhitungan daya
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    // Validasi input
+    const power = parseFloat(inputPower.toString());
+    const ports = parseInt(splitterPorts.toString());
+
+    if (isNaN(power) || isNaN(ports) || ports <= 1) {
+      alert('Harap masukkan nilai daya input yang valid dan jumlah port lebih dari 1.');
+      return;
+    }
+
+    // Perhitungan loss per port dan total power loss
+    const calculatedPowerLossPerPort = 10 * Math.log10(ports);
+    const calculatedPowerLoss = power - calculatedPowerLossPerPort;
+
+    // Menyimpan hasil perhitungan ke state
+    setPowerLoss(calculatedPowerLoss.toFixed(2));
+    setPowerLossPerPort(calculatedPowerLossPerPort.toFixed(2));
+  };
 
   return (
-    <div>
-    <div style={{ backgroundColor: color }}>
-      <h1 style={styles.title}>Generator Warna Acak</h1>
-      <p style={styles.colorCode}>Kode Warna: {color}</p>
-      <p style={styles.colorCode}>Time Clicked : {count}</p>
-      <button style={styles.button} onClick={generateRandomColor}>
-        Hasilkan Warna
-      </button>
+    <div className="container">
+      <h1>SiFO</h1>
+      <form onSubmit={handleSubmit}>
+        <div className="input-group">
+          <label htmlFor="input-power">Daya Input (dBm):</label>
+          <input
+            type="number"
+            id="input-power"
+            value={inputPower}
+            onChange={handlePowerChange}
+            placeholder="Masukkan daya input (dBm)"
+            required
+          />
+        </div>
+
+        <div className="input-group">
+          <label htmlFor="splitter-ports">Jumlah Port Splitter:</label>
+          <input
+            type="number"
+            id="splitter-ports"
+            value={splitterPorts}
+            onChange={handlePortsChange}
+            placeholder="Masukkan jumlah port"
+            required
+          />
+        </div>
+    <div> 
+    <button className ="button"> Hitung</button>
+
     </div>
+      </form>
+
+      <div id="result">
+        {powerLoss !== null && (
+          <>
+            <h3>Hasil Perhitungan:</h3>
+            <p>Rasio Pembagian Daya: <strong>{powerLoss}</strong> dB</p>
+            <p>Rasio Pembagian Daya per Port: <strong>{powerLossPerPort}</strong> dB</p>
+          </>
+        )}
+      </div>
     </div>
   );
-};
-
-const styles = {
-  container: {
-    height: "100vh",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    fontFamily: "Arial, sans-serif",
-    color: "#333",
-    transition: "background-color 0.5s ease",
-  },
-  title: {
-    fontSize: "2rem",
-    marginBottom: "10px",
-  },
-  colorCode: {
-    fontSize: "1.2rem",
-    marginBottom: "20px",
-  },
-  button: {
-    padding: "10px 20px",
-    fontSize: "1rem",
-    backgroundColor: "#007BFF",
-    color: "white",
-    border: "none",
-    borderRadius: "5px",
-    cursor: "pointer",
-    transition: "background-color 0.3s ease",
-  },
-};
+}
 
 export default App;
-
