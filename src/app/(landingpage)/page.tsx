@@ -1,6 +1,6 @@
 'use client'
 
-import Calculator from "@/components/calculator";
+import Calculator from "@/components/calculator/calculator";
 import HeroSection from "@/components/head";
 import React, { useRef } from "react";
 
