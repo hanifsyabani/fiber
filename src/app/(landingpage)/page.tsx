@@ -15,7 +15,7 @@ export default function page() {
   };
   return (
     <>
-      <HeroSection onButtonClick={scrollToCalculator} />
+      {/* <HeroSection onButtonClick={scrollToCalculator} /> */}
       <div ref={calculatorRef}>
         <Calculator />
       </div>

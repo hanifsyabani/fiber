@@ -13,7 +13,7 @@ export default function HeroSection({
     <>
       <section
         style={{ backgroundImage: `url(${bgfiber.src})` }}
-        className="bg-center relative bg-cover h-screen "
+        className="bg-center relative bg-cover h-[10vh] "
       >
         <div className="absolute inset-0 bg-black bg-opacity-75 "></div>
         <div className="relative flex justify-center gap-10 p-10 items-center pt-44">
