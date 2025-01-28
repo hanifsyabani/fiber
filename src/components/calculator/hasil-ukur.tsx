@@ -2,6 +2,8 @@ import { Trash2 } from "lucide-react";
 import { Button } from "../ui/button";
 import { Card, CardContent } from "../ui/card";
 import { cn } from "@/lib/utils";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 
 export default function HasilUkur({ measurements, setMeasurements }: any) {
   const removeMeasurement = (index: number) => {
@@ -27,7 +29,7 @@ export default function HasilUkur({ measurements, setMeasurements }: any) {
 
     return {
       min: parseFloat((lossPerKm * lengthInKm).toFixed(2)),
-      max: parseFloat((lossPerKm * lengthInKm * 1.2).toFixed(2)), 
+      max: parseFloat((lossPerKm * lengthInKm * 1.2).toFixed(2)),
     };
   };
 
@@ -45,9 +47,78 @@ export default function HasilUkur({ measurements, setMeasurements }: any) {
     );
   };
 
+  const downloadPDF = () => {
+    const pdf = new jsPDF("portrait", "mm", "a4");
+
+    measurements.forEach((measurement: any, index: number) => {
+      const specificLossLimits = calculateMeasurementSpecificLossLimits(measurement);
+
+      // Add Title
+      pdf.setFontSize(16);
+      pdf.setTextColor(0, 51, 153); // Blue
+      pdf.text(
+        `${measurement.startLocation} → ${measurement.endLocation}`,
+        10,
+        20
+      );
+
+      // Add Details
+      pdf.setFontSize(12);
+      pdf.setTextColor(0, 0, 0); // Black
+      const details = [
+        `Tipe Fiber: ${
+          measurement.fiberType === "singlemode" ? "Single Mode" : "Multi Mode"
+        }`,
+        `Panjang Gelombang: ${measurement.wavelength} nm`,
+        `Panjang Kabel: ${measurement.cableLength} m`,
+        `Jumlah Splice: ${measurement.splicesCount}`,
+        `Jumlah Konektor: ${measurement.connectorsCount}`,
+        `Loss Fiber: ${measurement.results.fiberLoss} dB`,
+        `Loss Splice: ${measurement.results.spliceLoss} dB`,
+        `Loss Konektor: ${measurement.results.connectorLoss} dB`,
+        `Total Loss: ${measurement.results.totalLoss} dB`,
+        `Min Loss Berdasarkan Panjang: ${specificLossLimits.min} dB`,
+        `Max Loss Berdasarkan Panjang: ${specificLossLimits.max} dB`,
+      ];
+
+      let yOffset = 30; // Start below title
+      details.forEach((detail) => {
+        pdf.text(detail, 10, yOffset);
+        yOffset += 7;
+      });
+
+      // Add Note
+      pdf.setTextColor(100, 100, 100); // Gray
+      pdf.setFontSize(10);
+      pdf.text(
+        `Berdasarkan standar ITU-T, batas redaman serat optik untuk fiber ${
+          measurement.fiberType === "singlemode" ? "Single Mode" : "Multi Mode"
+        } pada panjang gelombang ${measurement.wavelength} nm adalah sekitar ${
+          measurement.fiberType === "singlemode"
+            ? measurement.wavelength === "1310"
+              ? "0.35 dB/km"
+              : "0.22 dB/km"
+            : measurement.wavelength === "850"
+            ? "3.0 dB/km"
+            : "1.0 dB/km"
+        }.`,
+        10,
+        yOffset + 10,
+        { maxWidth: 190 } // Wrap text
+      );
+
+      // Add a new page if not the last measurement
+      if (index < measurements.length - 1) {
+        pdf.addPage();
+      }
+    });
+
+    pdf.save("Hasil_Pengukuran.pdf");
+  };
+
   return (
     <>
-      <Card className="shadow-lg border-blue-100">
+      <Card className="shadow-lg border-blue-100" id="hasil-ukur">
         <CardContent className="p-6">
           <h2 className="text-xl font-semibold text-blue-800 mb-6">
             Hasil Pengukuran
@@ -157,16 +228,20 @@ export default function HasilUkur({ measurements, setMeasurements }: any) {
                     </div>
                     <div className="mt-3 text-sm text-gray-600">
                       Berdasarkan standar ITU-T, batas redaman serat optik untuk
-                      fiber {measurement.fiberType === "singlemode"
+                      fiber{" "}
+                      {measurement.fiberType === "singlemode"
                         ? "Single Mode"
-                        : "Multi Mode"} pada panjang gelombang {measurement.wavelength} nm adalah
-                      sekitar {measurement.fiberType === "singlemode"
+                        : "Multi Mode"}{" "}
+                      pada panjang gelombang {measurement.wavelength} nm adalah
+                      sekitar{" "}
+                      {measurement.fiberType === "singlemode"
                         ? measurement.wavelength === "1310"
                           ? "0.35 dB/km"
                           : "0.22 dB/km"
                         : measurement.wavelength === "850"
                         ? "3.0 dB/km"
-                        : "1.0 dB/km"}.
+                        : "1.0 dB/km"}
+                      .
                     </div>
                   </div>
                 );
@@ -191,6 +266,7 @@ export default function HasilUkur({ measurements, setMeasurements }: any) {
                     </span>
                   </div>
                   <Button
+                    onClick={downloadPDF}
                     className={cn(
                       "bg-green-700 hover:bg-green-900 text-white rounded-lg"
                     )}
