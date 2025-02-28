@@ -36,12 +36,12 @@ type AllCoefficients = {
 
 const coefficients: AllCoefficients = {
   singlemode: {
-    "1310": { fiber: 0.35, splice: 0.1, connector: 0.5 },
-    "1550": { fiber: 0.22, splice: 0.1, connector: 0.5 },
+    "1310": { fiber: 0.35, splice: 0.15, connector: 0.5 },
+    "1550": { fiber: 0.22, splice: 0.15, connector: 0.5 },
   },
   multimode: {
-    "850": { fiber: 3.0, splice: 0.1, connector: 0.5 },
-    "1300": { fiber: 1.0, splice: 0.1, connector: 0.5 },
+    "850": { fiber: 3.0, splice: 0.15, connector: 0.5 },
+    "1300": { fiber: 1.0, splice: 0.15, connector: 0.5 },
   },
 };
 
@@ -118,7 +118,7 @@ export default function Calculator() {
       const spliceLoss = parseInt(data.splicesCount) * wavelengthCoeff.splice;
       const connectorLoss =
         parseInt(data.connectorsCount) * wavelengthCoeff.connector;
-      const totalLoss = fiberLoss + spliceLoss + connectorLoss;
+      const totalLoss = fiberLoss + spliceLoss +connectorLoss;
 
       const result = {
         ...data,

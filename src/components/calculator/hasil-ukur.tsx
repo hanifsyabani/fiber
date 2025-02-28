@@ -2,7 +2,6 @@ import { Trash2 } from "lucide-react";
 import { Button } from "../ui/button";
 import { Card, CardContent } from "../ui/card";
 import { cn } from "@/lib/utils";
-import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 
 export default function HasilUkur({ measurements, setMeasurements }: any) {
@@ -18,7 +17,7 @@ export default function HasilUkur({ measurements, setMeasurements }: any) {
       },
       multimode: {
         "850": 3.0,
-        "1300": 1.0,
+        "1300": 0.7,
       },
     };
 
@@ -29,7 +28,7 @@ export default function HasilUkur({ measurements, setMeasurements }: any) {
 
     return {
       min: parseFloat((lossPerKm * lengthInKm).toFixed(2)),
-      max: parseFloat((lossPerKm * lengthInKm * 1.2).toFixed(2)),
+      max: parseFloat((lossPerKm * lengthInKm * 3).toFixed(2)),
     };
   };
 
@@ -210,22 +209,22 @@ export default function HasilUkur({ measurements, setMeasurements }: any) {
                         {measurement.results.totalLoss} dB
                       </span>
                     </div>
-                    <div className="flex justify-between mt-1">
+                    {/* <div className="flex justify-between mt-1">
                       <span className="text-gray-600 text-sm">
                         Min Loss Berdasarkan Panjang:
                       </span>
                       <span className="text-green-600 text-sm">
                         {specificLossLimits.min} dB
                       </span>
-                    </div>
-                    <div className="flex justify-between mt-1">
+                    </div> */}
+                    {/* <div className="flex justify-between mt-1">
                       <span className="text-gray-600 text-sm">
                         Max Loss Berdasarkan Panjang:
                       </span>
                       <span className="text-red-600 text-sm">
                         {specificLossLimits.max} dB
                       </span>
-                    </div>
+                    </div> */}
                     <div className="mt-3 text-sm text-gray-600">
                       Berdasarkan standar ITU-T, batas redaman serat optik untuk
                       fiber{" "}
